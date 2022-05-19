@@ -11,6 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Controller controller = Controller();
   @override
   Widget build(BuildContext context) {
@@ -26,17 +27,23 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: TextFormField(
-                    maxLength: 8,
-                    decoration: const InputDecoration(
-                      labelText: 'Search',
+                Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextFormField(
+                      maxLength: 8,
+                      decoration: const InputDecoration(
+                        labelText: 'Search',
+                      ),
+                      onChanged: (String value) {
+                        controller.setSearchText(value);
+                        _formKey.currentState?.validate();
+                      },
+                      validator: (value) =>
+                          controller.isValid ? null : 'Campo inválido',
+                      initialValue: controller.searchText,
                     ),
-                    onChanged: (String value) {
-                      controller.setSearchText(value);
-                    },
-                    initialValue: controller.searchText,
                   ),
                 ),
                 ElevatedButton(

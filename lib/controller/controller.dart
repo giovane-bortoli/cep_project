@@ -22,6 +22,9 @@ abstract class _ControllerBase with Store {
   @computed
   bool get isFound => addressResult != null;
 
+  @computed
+  bool get isValid => searchText.length == 8;
+
   @action
   void setSearchText(String value) {
     searchText = value;

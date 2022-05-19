@@ -19,51 +19,68 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
       ),
       body: Observer(builder: (context) {
-        return controller.isLoading //CONDIÇÃO
-            ? const Center(child: CircularProgressIndicator()) // TRUE
-            : // FALSE
-
-            Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Search',
-                        ),
-                      ),
+        if (controller.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: TextFormField(
+                    maxLength: 8,
+                    decoration: const InputDecoration(
+                      labelText: 'Search',
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await controller.searchCepController('92310270');
-                      },
-                      child: const Text('Search'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        height: 150,
-                        width: double.infinity,
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Column(
-                            children: const [
-                              Text('Rua: '),
-                              Text('Bairro: '),
-                              Text('Complemento:'),
-                              Text('Cidade:'),
-                              Text('Estado:'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                    onChanged: (String value) {
+                      controller.setSearchText(value);
+                    },
+                    initialValue: controller.searchText,
+                  ),
                 ),
-              );
+                ElevatedButton(
+                  onPressed: () async {
+                    await controller.searchCepController(controller.searchText);
+                  },
+                  child: const Text('Search'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    width: double.infinity,
+                    child: Card(
+                      elevation: 16.0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Padding(
+                        padding: EdgeInsets.all(32),
+                        child: !controller.isFound
+                            ? const Text('Cep inválido!')
+                            : Column(
+                                children: [
+                                  Text(
+                                      'CEP: ${controller.addressResult?.cep ?? ''}'),
+                                  Text(
+                                      'Logradouro: ${controller.addressResult?.logradouro ?? ''}'),
+                                  Text(
+                                      'Complemento: ${controller.addressResult?.complemento ?? ''}'),
+                                  Text(
+                                      'Bairro: ${controller.addressResult?.bairro ?? ''}'),
+                                  Text(
+                                      'Localidade: ${controller.addressResult?.localidade ?? ''}'),
+                                  Text(
+                                      'Estado: ${controller.addressResult?.uf ?? ''}'),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
       }),
     );
   }
